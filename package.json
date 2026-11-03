@@ -8,6 +8,9 @@
     "preview": "vite preview"
   },
   "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
   "dependencies": {
     "@bpmn-io/properties-panel": "^3.58.1",
     "bpmn-js": "^18.31.1",
