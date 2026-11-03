@@ -14,11 +14,14 @@
   "dependencies": {
     "@bpmn-io/properties-panel": "^3.58.1",
     "bpmn-js": "^18.31.1",
+    "bpmn-js-bpmnlint": "^0.25.0",
     "bpmn-js-properties-panel": "^5.65.3",
+    "bpmnlint": "^11.15.0",
     "camunda-bpmn-js-behaviors": "^1.18.0",
     "camunda-bpmn-moddle": "^8.0.2"
   },
   "devDependencies": {
+    "rollup-plugin-bpmnlint": "^0.4.1",
     "vite": "^8.3.5"
   },
   "private": true

@@ -6,11 +6,14 @@ import {
 } from 'bpmn-js-properties-panel';
 import CamundaBehaviorsModule from 'camunda-bpmn-js-behaviors/lib/camunda-platform';
 import camundaModdleDescriptor from 'camunda-bpmn-moddle/resources/camunda.json';
+import lintModule from 'bpmn-js-bpmnlint';
+import bpmnlintConfig from '../.bpmnlintrc';
 
 import 'bpmn-js/dist/assets/diagram-js.css';
 import 'bpmn-js/dist/assets/bpmn-js.css';
 import 'bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css';
 import '@bpmn-io/properties-panel/dist/assets/properties-panel.css';
+import 'bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css';
 import './style.css';
 
 import emptyDiagram from './empty.bpmn?raw';
@@ -24,8 +27,10 @@ const modeler = new BpmnModeler({
     BpmnPropertiesPanelModule,
     BpmnPropertiesProviderModule,
     CamundaPlatformPropertiesProviderModule,
-    CamundaBehaviorsModule
+    CamundaBehaviorsModule,
+    lintModule
   ],
+  linting: { bpmnlint: bpmnlintConfig, active: false },
   moddleExtensions: { camunda: camundaModdleDescriptor }
 });
 

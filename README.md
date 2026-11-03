@@ -10,6 +10,7 @@ Gebouwd met [bpmn-js](https://bpmn.io/toolkit/bpmn-js/) en [bpmn-js-properties-p
 - **Opslaan:** knop *Opslaan .bpmn* of `Ctrl+S`
 - **Exporteren:** knop *Exporteer .svg*
 - Een • achter de bestandsnaam betekent dat er niet-opgeslagen wijzigingen zijn
+- **Validatie:** [bpmnlint](https://github.com/bpmn-io/bpmnlint) controleert het diagram live; de knop onderaan toont het aantal fouten/waarschuwingen. Regels staan in `.bpmnlintrc`
 
 ## Ontwikkelen
 
