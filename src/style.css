@@ -1,0 +1,83 @@
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: #1f2328;
+  background: #fff;
+}
+
+body { display: flex; flex-direction: column; }
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 16px;
+  border-bottom: 1px solid #d0d7de;
+  background: #f6f8fa;
+}
+
+.title { font-size: 15px; }
+
+.filename { color: #57606a; font-size: 14px; }
+.filename.dirty::after { content: ' •'; color: #bf8700; }
+
+.actions { margin-left: auto; display: flex; gap: 8px; }
+
+button {
+  font: inherit;
+  font-size: 13px;
+  padding: 6px 12px;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+button:hover { background: #f3f4f6; }
+
+.workspace { flex: 1; display: flex; min-height: 0; }
+
+.canvas { flex: 1; position: relative; }
+
+.properties {
+  width: 340px;
+  border-left: 1px solid #d0d7de;
+  overflow: auto;
+}
+
+.drop-hint {
+  display: none;
+  position: absolute;
+  inset: 16px;
+  z-index: 10;
+  align-items: center;
+  justify-content: center;
+  border: 3px dashed #0969da;
+  border-radius: 12px;
+  background: rgba(9, 105, 218, 0.06);
+  color: #0969da;
+  font-size: 18px;
+  pointer-events: none;
+}
+.canvas.dragging .drop-hint { display: flex; }
+
+.error {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 90vw;
+  padding: 10px 16px;
+  border-radius: 6px;
+  background: #cf222e;
+  color: #fff;
+  font-size: 14px;
+  z-index: 100;
+}
+
+@media (max-width: 800px) {
+  .workspace { flex-direction: column; }
+  .properties { width: auto; height: 40%; border-left: 0; border-top: 1px solid #d0d7de; }
+}

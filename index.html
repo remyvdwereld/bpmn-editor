@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BPMN Editor</title>
+  </head>
+  <body>
+    <header class="toolbar">
+      <strong class="title">BPMN Editor</strong>
+      <span id="filename" class="filename">nieuw-diagram.bpmn</span>
+      <div class="actions">
+        <button id="btn-new" type="button">Nieuw</button>
+        <button id="btn-open" type="button">Openen…</button>
+        <button id="btn-save" type="button">Opslaan .bpmn</button>
+        <button id="btn-svg" type="button">Exporteer .svg</button>
+        <input id="file-input" type="file" accept=".bpmn,.xml" hidden />
+      </div>
+    </header>
+    <main class="workspace">
+      <div id="canvas" class="canvas">
+        <div id="drop-hint" class="drop-hint">Laat je .bpmn-bestand hier los</div>
+      </div>
+      <aside id="properties" class="properties"></aside>
+    </main>
+    <div id="error" class="error" hidden></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
