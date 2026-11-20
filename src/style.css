@@ -22,7 +22,16 @@ body { display: flex; flex-direction: column; }
 .title { font-size: 15px; }
 
 .filename { color: #57606a; font-size: 14px; }
-.filename.dirty::after { content: ' •'; color: #bf8700; }
+.filename.dirty::after {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-left: 8px;
+  border-radius: 50%;
+  background: #bf8700;
+  vertical-align: middle;
+}
 
 .actions { margin-left: auto; display: flex; gap: 8px; }
 
