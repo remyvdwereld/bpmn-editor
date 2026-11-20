@@ -44,6 +44,8 @@ let filename = 'nieuw-diagram.bpmn';
 let dirty = false;
 let fileHandle = null; // gekoppeld bestand op schijf, of null
 let lastModified = 0;  // om externe wijzigingen te detecteren vóór het opslaan
+let ignoredModified = 0; // externe versie waarvoor de gebruiker "negeren" koos
+let saving = false;
 
 function setFilename(name) {
   filename = name;
@@ -58,6 +60,7 @@ function setFilename(name) {
 function setDirty(value) {
   dirty = value;
   $('filename').classList.toggle('dirty', value);
+  if (!$('reload-banner').hidden) renderReloadBanner();
 }
 
 function showError(message) {
@@ -70,13 +73,18 @@ function showError(message) {
 
 const isAbort = (err) => err?.name === 'AbortError';
 
-async function openDiagram(xml, name, handle = null, modified = 0) {
+async function openDiagram(xml, name, handle = null, modified = 0, { keepViewport = false } = {}) {
   try {
+    const canvas = modeler.get('canvas');
+    const { x, y, width, height } = canvas.viewbox();
     const { warnings } = await modeler.importXML(xml);
     if (warnings.length) console.warn('Import-waarschuwingen:', warnings);
-    modeler.get('canvas').zoom('fit-viewport', 'auto');
+    if (keepViewport) canvas.viewbox({ x, y, width, height });
+    else canvas.zoom('fit-viewport', 'auto');
     fileHandle = handle;
     lastModified = modified;
+    ignoredModified = 0;
+    hideReloadBanner();
     setFilename(name);
     setDirty(false);
     return true;
@@ -142,10 +150,17 @@ const baseName = () => filename.replace(/\.(bpmn|xml)$/i, '');
 
 async function writeToHandle(handle) {
   const { xml } = await modeler.saveXML({ format: true });
-  const writable = await handle.createWritable();
-  await writable.write(xml);
-  await writable.close();
-  lastModified = (await handle.getFile()).lastModified;
+  saving = true; // voorkom dat de eigen schrijfactie als externe wijziging gezien wordt
+  try {
+    const writable = await handle.createWritable();
+    await writable.write(xml);
+    await writable.close();
+    lastModified = (await handle.getFile()).lastModified;
+  } finally {
+    saving = false;
+  }
+  ignoredModified = 0;
+  hideReloadBanner();
   setDirty(false);
 }
 
@@ -354,6 +369,73 @@ canvasEl.addEventListener('drop', (e) => {
     else openFile(file);
   });
 });
+
+// Externe wijzigingen detecteren: periodiek (alleen als het tabblad zichtbaar is)
+// en direct bij terugkeer naar het tabblad. Leest alleen de wijzigingsdatum.
+const WATCH_INTERVAL = 2000;
+let checking = false;
+
+function renderReloadBanner() {
+  const banner = $('reload-banner');
+  banner.classList.toggle('conflict', dirty);
+  $('reload-text').textContent = dirty
+    ? `"${filename}" is ook buiten de editor gewijzigd.`
+    : `"${filename}" is gewijzigd op schijf.`;
+  $('btn-reload').textContent = dirty ? 'Herladen en mijn wijzigingen weggooien' : 'Herladen';
+  $('btn-reload-ignore').textContent = dirty ? 'Mijn versie houden' : 'Negeren';
+  banner.hidden = false;
+}
+
+function hideReloadBanner() {
+  $('reload-banner').hidden = true;
+}
+
+async function checkForExternalChange() {
+  const handle = fileHandle;
+  if (!handle || checking || saving || document.hidden) return;
+  checking = true;
+  try {
+    const { lastModified: modified } = await handle.getFile();
+    if (handle !== fileHandle || saving) return; // intussen ander bestand geopend of opgeslagen
+    if (modified !== lastModified && modified !== ignoredModified) renderReloadBanner();
+  } catch (err) {
+    // Bijv. tijdelijk weg tijdens een atomic save door een andere editor; volgende keer opnieuw
+    console.debug('Controle op externe wijziging mislukt:', err);
+  } finally {
+    checking = false;
+  }
+}
+
+async function reloadFromDisk() {
+  const handle = fileHandle;
+  if (!handle) return;
+  try {
+    const file = await handle.getFile();
+    await openDiagram(await file.text(), file.name, handle, file.lastModified, { keepViewport: true });
+  } catch (err) {
+    console.error(err);
+    showError(`Herladen mislukt: ${err.message}`);
+  }
+}
+
+async function ignoreExternalChange() {
+  hideReloadBanner();
+  try {
+    // Bij de volgende externe wijziging komt de melding terug.
+    // lastModified blijft ongewijzigd, zodat Opslaan nog vraagt om te overschrijven.
+    ignoredModified = (await fileHandle.getFile()).lastModified;
+  } catch {
+    ignoredModified = 0;
+  }
+}
+
+if (fsSupported) {
+  $('btn-reload').addEventListener('click', reloadFromDisk);
+  $('btn-reload-ignore').addEventListener('click', ignoreExternalChange);
+  setInterval(checkForExternalChange, WATCH_INTERVAL);
+  document.addEventListener('visibilitychange', checkForExternalChange);
+  window.addEventListener('focus', checkForExternalChange);
+}
 
 // Wijzigingen bijhouden
 modeler.on('commandStack.changed', () => setDirty(true));
