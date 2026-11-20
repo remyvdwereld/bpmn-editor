@@ -81,3 +81,45 @@ button:hover { background: #f3f4f6; }
   .workspace { flex-direction: column; }
   .properties { width: auto; height: 40%; border-left: 0; border-top: 1px solid #d0d7de; }
 }
+
+/* Recente bestanden */
+.menu { position: relative; }
+.menu > summary {
+  list-style: none;
+  font-size: 13px;
+  padding: 6px 12px;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  user-select: none;
+}
+.menu > summary::-webkit-details-marker { display: none; }
+.menu > summary::after { content: ' ▾'; color: #57606a; }
+.menu > summary:hover { background: #f3f4f6; }
+
+.menu-list {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 50;
+  min-width: 260px;
+  max-width: 360px;
+  padding: 4px;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(140, 149, 159, 0.2);
+}
+.menu-list ul { list-style: none; margin: 0; padding: 0; }
+.menu-list li button,
+.menu-list .menu-clear {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  border-radius: 4px;
+}
+.menu-list li button small { display: block; color: #57606a; font-size: 11px; }
+.menu-list .menu-empty { padding: 6px 12px; color: #57606a; font-size: 13px; }
+.menu-list .menu-clear { margin-top: 4px; border-top: 1px solid #d0d7de; border-radius: 0 0 4px 4px; color: #57606a; }

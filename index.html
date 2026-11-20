@@ -12,7 +12,15 @@
       <div class="actions">
         <button id="btn-new" type="button">Nieuw</button>
         <button id="btn-open" type="button">Openen…</button>
-        <button id="btn-save" type="button">Opslaan .bpmn</button>
+        <details id="recent-menu" class="menu" hidden>
+          <summary>Recent</summary>
+          <div class="menu-list">
+            <ul id="recent-list"></ul>
+            <button id="btn-recent-clear" type="button" class="menu-clear">Lijst wissen</button>
+          </div>
+        </details>
+        <button id="btn-save" type="button" title="Ctrl+S">Opslaan</button>
+        <button id="btn-save-as" type="button" title="Ctrl+Shift+S">Opslaan als…</button>
         <button id="btn-svg" type="button">Exporteer .svg</button>
         <input id="file-input" type="file" accept=".bpmn,.xml" hidden />
       </div>
